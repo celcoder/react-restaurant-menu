@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Route } from 'react-router';
+import { createHistory } from 'history';
 
 // Main app component
 var App = React.createClass({
@@ -64,4 +66,27 @@ var StorePicker = React.createClass({
 
 });
 
-ReactDOM.render(<App/>, document.getElementById('main'));
+// Not found component
+var NotFound = React.createClass({
+
+  render: function() {
+    return (
+      <h1>Not Found!</h1>
+    )
+  }
+
+});
+
+/*
+  Routes
+*/
+
+var routes = (
+  <Router history={createHistory()}>
+    <Route path="/" component={StorePicker} />
+    <Route path="/store/:storeId" component={App} />
+    <Route path="*" component={NotFound } />
+  </Router>
+)
+
+ReactDOM.render(routes, document.getElementById('main'));
