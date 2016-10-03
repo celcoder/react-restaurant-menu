@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router';
 import { createHistory } from 'history';
+import h from './helpers';
 
 // Main app component
 var App = React.createClass({
@@ -10,7 +11,7 @@ var App = React.createClass({
     return (
       <div className="catch-of-the-day">
         <div className="menu">
-          <Header></Header>
+          <Header tagLine="Fresh Seafood Market"></Header>
         </div>
         <Order></Order>
         <Inventory></Inventory>
@@ -25,8 +26,17 @@ var Header = React.createClass({
 
   render: function() {
     return (
-      <p>Header</p>
-    )
+      <header className="top">
+        <h1>Catch
+          <span className="ofThe">
+            <span className="of">of</span>
+            <span className="the">the</span>
+          </span>
+          Day
+        </h1>
+        <h3 className="tagLine"><span>{this.props.tagLine}</span></h3>
+      </header>
+    );
   }
 
 });
@@ -58,7 +68,7 @@ var StorePicker = React.createClass({
     return (
       <form className="store-selector">
         <h2>Please Enter A Store</h2>
-        <input type="text" ref="storeId" />
+        <input type="text" ref="storeId" defaultValue={h.getFunName()} required />
         <input type="submit" />
       </form>
     )
