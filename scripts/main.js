@@ -5,6 +5,9 @@ import { Router, Route } from 'react-router';
 import { createHistory } from 'history';
 import h from './helpers';
 
+// Firebase
+var Rebase = require('re-base');
+var base = Rebase.createClass('https://react-restaurant-menu.firebaseio.com/');
 
 // Main app component
 var App = React.createClass({
@@ -13,6 +16,13 @@ var App = React.createClass({
       fishes: {},
       order: {}
     }
+  },
+
+  componentDidMount: function() {
+    base.syncState(this.props.params.storeId + '/fishes', {
+      context: this,
+      state: 'fishes'
+    });
   },
 
   addToOrder: function(key) {
