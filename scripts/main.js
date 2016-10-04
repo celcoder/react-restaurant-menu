@@ -15,6 +15,11 @@ var App = React.createClass({
     }
   },
 
+  addToOrder: function(key) {
+    this.state.order[key] = this.state.order[key] + 1 || 1;
+    this.setState({order: this.state.order});
+  },
+
   addFish: function(fish) {
     var timestamp = (new Date()).getTime();
     this.state.fishes['fish-' + timestamp] = fish;
@@ -28,7 +33,7 @@ var App = React.createClass({
   },
 
   renderFish: function(key) {
-    return <Fish key={key} index={key} details={this.state.fishes[key]}></Fish>
+    return <Fish key={key} index={key} details={this.state.fishes[key]} addToOrder={this.addToOrder}></Fish>
   },
 
   render: function() {
@@ -51,6 +56,11 @@ var App = React.createClass({
 // Fish component
 var Fish = React.createClass({
 
+  onButtonClick: function() {
+    var key = this.props.index;
+    this.props.addToOrder(key)
+  },
+
   render: function() {
     var details = this.props.details;
     var isAvailable = (details.status == 'available' ? true : false);
@@ -63,7 +73,7 @@ var Fish = React.createClass({
           <span className="price">{h.formatPrice(details.price)}</span>
         </h3>
         <p>{details.desc}</p>
-        <button disabled={!isAvailable}>{buttonText}</button>
+        <button disabled={!isAvailable} onClick={this.onButtonClick}>{buttonText}</button>
       </li>
     )
   }
@@ -147,7 +157,7 @@ var Order = React.createClass({
   render: function() {
     var orderIds = Object.keys(this.props.order);
     var total = orderIds.reduce((prevTotal, key) => {
-      var fish = this.props.fishs[key];
+      var fish = this.props.fishes[key];
       var count = this.props.order[key];
       var isAvailable = fish && fish.status == 'available';
 
