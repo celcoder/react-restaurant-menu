@@ -4,6 +4,7 @@ import { ReactRouter, History } from 'react-router';
 import { Router, Route } from 'react-router';
 import { createHistory } from 'history';
 import h from './helpers';
+import Catalyst from 'react-catalyst';
 
 // Firebase
 var Rebase = require('re-base');
@@ -11,6 +12,7 @@ var base = Rebase.createClass('https://react-restaurant-menu.firebaseio.com/');
 
 // Main app component
 var App = React.createClass({
+  mixins: [Catalyst.LinkedStateMixin],
   getInitialState: function() {
     return {
       fishes: {},
@@ -23,6 +25,19 @@ var App = React.createClass({
       context: this,
       state: 'fishes'
     });
+
+    var localStorageRef = localStorage.getItem('order-' + this.props.params.storeId);
+
+    if (localStorageRef) {
+      this.setState({
+        order: JSON.parse(localStorageRef)
+      });
+    }
+  },
+
+  componentWillUpdate: function(nextProps, nextState) {
+    localStorage.setItem('order-' + this.props.params.storeId,
+    JSON.stringify(nextState.order));
   },
 
   addToOrder: function(key) {
@@ -56,7 +71,7 @@ var App = React.createClass({
           </ul>
         </div>
         <Order fishes={this.state.fishes} order={this.state.order}></Order>
-        <Inventory addFish={this.addFish} loadSamples={this.loadSamples}></Inventory>
+        <Inventory addFish={this.addFish} loadSamples={this.loadSamples} fishes={this.state.fishes} linkState={this.linkState }></Inventory>
       </div>
     )
   }
@@ -156,7 +171,7 @@ var Order = React.createClass({
     }
 
     return (
-      <li>
+      <li key={key}>
         {count}lbs
         {fish.name}
         <span className="price">{h.formatPrice(count * fish.price)}</span>
@@ -194,12 +209,27 @@ var Order = React.createClass({
 });
 
 var Inventory = React.createClass({
-
+  renderInventory: function(key) {
+    var linkState = this.props.linkState;
+    return (
+      <div className="fish-edit" key={key}>
+        <input type="text" valueLink={linkState('fishes.' + key + '.name')} />
+        <input type="text" valueLink={linkState('fishes.' + key + '.price')} />
+        <select valueLink={linkState('fishes.' + key + '.status')}>
+          <option value="available">Available</option>
+          <option value="unavailable">Sold out</option>
+        </select>
+        <textarea valueLink={linkState('fishes.' + key + '.desc')}></textarea>
+        <input type="text" valueLink={linkState('fishes.' + key + '.image')} />
+        <button>Remove Fish</button>
+      </div>
+    )
+  },
   render: function() {
     return (
       <div>
         <h2>Inventory</h2>
-
+        {Object.keys(this.props.fishes).map(this.renderInventory)}
         <AddFishForm {...this.props} ></AddFishForm>
         <button onClick={this.props.loadSamples}>Load Sample Fishes</button>
       </div>
