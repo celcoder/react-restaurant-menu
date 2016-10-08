@@ -6,6 +6,11 @@ import { createHistory } from 'history';
 import h from './helpers';
 import Catalyst from 'react-catalyst';
 
+/*
+  Import components
+*/
+import NotFound from './components/NotFound';
+
 // Firebase
 var Rebase = require('re-base');
 var base = Rebase.createClass('https://react-restaurant-menu.firebaseio.com/');
@@ -172,6 +177,10 @@ var Header = React.createClass({
         <h3 className="tagLine"><span>{this.props.tagLine}</span></h3>
       </header>
     );
+  },
+
+  propTypes: {
+    tagLine: React.PropTypes.string.isRequired
   }
 
 });
@@ -222,7 +231,14 @@ var Order = React.createClass({
         </ul>
       </div>
     )
+  },
+
+  propTypes: {
+    fishes: React.PropTypes.object.isRequired,
+    order: React.PropTypes.object.isRequired,
+    removeFromOrder: React.PropTypes.func.isRequired
   }
+
 
 });
 
@@ -252,6 +268,14 @@ var Inventory = React.createClass({
         <button onClick={this.props.loadSamples}>Load Sample Fishes</button>
       </div>
     )
+  },
+
+  propTypes: {
+    addFish: React.PropTypes.func.isRequired,
+    loadSamples: React.PropTypes.func.isRequired,
+    fishes: React.PropTypes.object.isRequired,
+    linkState: React.PropTypes.func.isRequired,
+    removeFish: React.PropTypes.func.isRequired
   }
 
 });
@@ -275,17 +299,6 @@ var StorePicker = React.createClass({
         <input type="text" ref="storeId" defaultValue={h.getFunName()} required />
         <input type="submit" />
       </form>
-    )
-  }
-
-});
-
-// Not found component
-var NotFound = React.createClass({
-
-  render: function() {
-    return (
-      <h1>Not Found!</h1>
     )
   }
 
